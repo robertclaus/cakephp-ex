@@ -1,0 +1,531 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+	<style type="text/css" media="screen">
+		input[type='range']{
+			-webkit-appearance: none !important;
+			-webkit-border-radius: 5px;
+			-webkit-box-shadow: inset 0 0 5px #333;
+			background-color: #999;
+			display: block;
+			height: 60px;
+			width: 95%;
+			left: 10px;
+			right: 10px;
+			}
+		input[type='range']::-webkit-slider-thumb{
+			-webkit-appearance: none !important;
+			-webkit-border-radius:10px;
+			background-color: #AAA;
+			background-image: -webkit-gradient(linear, left top, left bottom, from(#EEE), to(#AAA));
+			border: 1px solid #999;
+			height: 44px;
+			width: 44px;
+			}
+		</style>
+	<script src= "http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">
+	</script>
+	<script src="jQueryRotate.js">
+	</script>
+	<script>
+		var spendablePoints=0;
+		var maxThrust=100;
+		var maxRadarWidth=1;
+		var inDock=0;
+		var radAngle=0;
+		var radFocus=0;
+		var id=2;
+		var range=0;
+		var x=0;
+		var y=0;
+		var thrustDirection=0;
+		var thrustStrength=0;
+		var missileTime=60;
+		var name="Ship ";
+		var mapScale=10;
+		var maxRadarRange=1;
+		var radarwidthrangeratio=1;
+		var maxMissileTimer=100;
+		//$("#thrustPowerSlider").slider("option","value",1);
+		//$("#thrustPowerSlider").val(1);
+		//$('#thrustPowerSlider").parent.page();
+		radarPing();
+	
+		
+		window.onload = function()
+		{
+		var input=window.location.search;
+		var location=input.search("id");
+		id=input.substring(location+3,input.length);
+		$.ajax({url:"../test3.php?query=SELECT x,y,vx,vy,thrustDirection,thrustStrength,radarAngle,radarFocus,name,maxThrust,maxRadarRange,maxRadarWidth,RadarWidthRatio,MaxMissileTimer FROM Ships WHERE id="+id,
+			dataType:'json',
+			success:function(result){
+			if(""==result[8]){
+			name="Ship "+id;
+			}else{
+			name=result[8];
+			}
+			$('#name').html(name);
+			x=result[0];
+			y=result[1];
+		    	$("#x").html("X: "+result[0]);
+		    	$("#y").html("Y: "+result[1]);
+		    	$("#vx").html("vX: "+Math.ceil(result[2]));
+		    	$("#vy").html("vY: "+Math.ceil(result[3]));
+			$("#thrustAngleDiv").html("Thrust Angle: "+result[4]);
+			thrustDirection=result[4];
+			thrustStrength=result[5];
+			$("#thrustPowerDiv").html("Thrust Power: "+result[5]+"%");
+			maxThrust=result[9];
+			$('#thrustPowerSlider').attr('max',maxThrust);
+			maxRadarRange=result[10];
+			maxRadarWidth=result[11];
+			$('#radarFocusSlider').attr('max',maxRadarWidth);
+			radarwidthrangeratio=result[12];
+			maxMissileTimer=result[13];
+			$('#missileTimerSlider').attr('max',maxMissileTimer);
+			document.getElementById("missileTimerSlider").value=10;
+			document.getElementById("thrustPowerSlider").value=result[5];
+			document.getElementById("thrustAngleSlider").value=result[4];
+			document.getElementById("radarAngleSlider").value=result[6];
+			document.getElementById("radarFocusSlider").value=result[7];
+			radarAngle(result[6]);
+			radarFocus(result[7]);
+			thrustAngle(result[4]);
+
+		  }});
+
+		$.ajax({url:"../updator.php",
+			dataType:'html',
+			success:function(result){
+		  }});
+
+		}
+		
+		setInterval(function () {
+		  $.ajax({url:"../test3.php?query=SELECT x,y,vx,vy,thrustDirection,thrustStrength,radarAngle,radarFocus,hp,score,spendingPoints,customMissileNames,MaxMissileTimer FROM Ships WHERE id="+id,
+			dataType:'json',
+			success:function(result){
+			x=result[0];
+			y=result[1];
+			$("#hp").html("Hp: " + result[8]);
+			$('#score').html("Score: "+result[9]);
+			spendablePoints=result[10];
+			if(result[11]==1)
+			{
+				$('#missileName').show();
+			}
+			else
+			{
+				$('#missileName').hide();
+			}
+			maxMissileTimer=result[12];
+			$('#missileTimerSlider').attr('max',maxMissileTimer);
+			$('#spendablePoints').html("Points to spend: "+spendablePoints);
+		    	$("#x").html("X: "+Math.ceil(result[0]));
+		    	$("#y").html("Y: "+Math.ceil(result[1]));
+		    	$("#vx").html("vX: "+Math.ceil(result[2]));
+		    	$("#vy").html("vY: "+Math.ceil(result[3]));
+			$("#thrustAngleDiv").html("Thrust Angle: "+result[4]);
+			thrustDirection=result[4];
+			thrustStrength=result[5];
+			radAngle=result[6];
+			radFocus=result[7];
+			$("#thrustPowerDiv").html("Thrust Power: "+result[5]+"%");
+			addpoint(x,y,id,"blue");
+			addLineMap(x,y,Math.ceil(-radAngle),"red");
+			addLineMap(x,y,Math.ceil(-radAngle+(radFocus/2)),"red");
+			addLineMap(x,y,Math.ceil(-radAngle-(radFocus/2)),"red");
+			addLineMap(x,y,Math.ceil(-thrustDirection),"blue");
+			if(x*x+y*y>10000)
+			{
+			inDock=0;
+			$("#docked").hide();
+			}
+			else
+			{
+			if(inDock==0)
+				{
+				$("#docked").show();
+				window.scrollTo(0,document.body.scrollHeight);
+				}
+			inDock=1;
+			}
+		  }});
+		},100);
+		
+		function radarPing() {
+		  $.ajax({url:"../test3.php?query=SELECT id,x,y,type,name FROM Ships WHERE NOT id="+id,
+			dataType:'json',
+			success:function(result){
+			removePoints();
+			$("#radarTargets").empty();
+			$("#radarTargets").append('<table style="width:100%">');
+			$("#radarTargets").append("<tr>");
+			$("#radarTargets").append("<td style='width:25%'>ID</td>");
+			$("#radarTargets").append("<td style='width:15%'>X</td>");
+			$("#radarTargets").append("<td style='width:15%'>Y</td>");
+			$("#radarTargets").append("<td style='width:10%'>Type</td>");
+			$("#radarTargets").append("<td style='width:15%'>Distance</td>");
+			$("#radarTargets").append("<td style='width:20%'>Angle (degrees)</td>");
+			$("#radarTargets").append("</tr>");
+			i=0;
+			while(i<result.length) {//>
+				
+				minAngle=parseFloat(radAngle)-(radFocus/2);
+				maxAngle=parseFloat(radAngle)+(radFocus/2);
+				if(minAngle<0)
+				{
+					minAngle=360+minAngle;
+				}
+				if(maxAngle>360)
+				{
+					maxAngle=maxAngle-360;
+				}
+				thisAngle=Math.atan2(parseFloat(result[i+2])-y,parseFloat(result[i+1])-x);
+				while(thisAngle<0)
+				{
+					thisAngle=thisAngle+2*Math.PI;
+				}
+				while(thisAngle>2*Math.PI)
+				{
+					thisAngle=thisAngle-2*Math.PI;
+				}
+				thisAngle=thisAngle*360/(2*3.14159);
+				var distance=Math.sqrt(Math.pow((result[i+1]-x),2)+Math.pow((result[i+2]-y),2));
+				if(((maxAngle<minAngle)&(thisAngle<=maxAngle || thisAngle>=minAngle))||(thisAngle<=maxAngle & thisAngle>=minAngle))
+				{
+					if(distance<range)
+					{
+						$("#radarTargets").append("<tr>");
+						if(result[i+4]==""){
+						$("#radarTargets").append("<td>"+Math.ceil(result[i+0])+"</td>");}
+						else{
+						$("#radarTargets").append("<td>"+result[i+4]+"</td>");}
+						$("#radarTargets").append("<td>"+Math.ceil(result[i+1])+"</td>");
+						$("#radarTargets").append("<td>"+Math.ceil(result[i+2])+"</td>");
+						$("#radarTargets").append("<td>"+result[i+3]+"</td>");
+						$("#radarTargets").append("<td>"+Math.ceil(distance)+"</td>");
+						$("#radarTargets").append("<td>"+Math.ceil(thisAngle)+"</td>");
+						$("#radarTargets").append("</tr>");
+						addpoint(result[i+1],result[i+2],result[i+0],"red");
+					}
+				}
+				i=i+5;
+			}
+			$("#radarTargets").append("</table>");
+
+		  }});
+		
+		};
+		function getAll(){
+		  $.ajax({url:"../test3.php?query=SELECT * FROM Ships WHERE id="+id,
+			success:function(result){
+		    	$("#div1").html(result);
+		  }});
+		};
+		
+		function thrustAngle(thrusty){
+		 $.ajax({url:"../test3.php?query=UPDATE Ships SET thrustDirection='"+thrusty+"' WHERE Ships.id="+id,
+			success:function(result){
+			document.getElementById("thrustAngleDiv").innerHTML="Thrust Angle: "+thrusty;
+			}});
+			$("#image").rotate(-Math.ceil(thrusty)+90);
+		};
+		function thrustPower(thrusty){
+		 $.ajax({url:"../test3.php?query=UPDATE Ships SET thrustStrength='"+thrusty.value+"' WHERE Ships.id="+id,
+			success:function(result){
+			document.getElementById("thrustPowerDiv").innerHTML="Thrust Power: "+thrusty.value+"%";
+			}});
+		};
+		var rArdy=1;
+		function radarAngle(thrusty){
+		if(rArdy==1)
+		{
+			rArdy=0;
+		 $.ajax({url:"../test3.php?query=UPDATE Ships SET radarAngle='"+thrusty+"' WHERE Ships.id="+id,
+			success:function(result){
+			//alert("success");
+			document.getElementById("radarAngleDiv").innerHTML="Radar Angle: "+thrusty;
+			radAngle=thrusty;
+			addLineRadar(Math.ceil(-radAngle));
+			addLineRadar(Math.ceil(-radAngle+(radFocus/2)));
+			addLineRadar(Math.ceil(-radAngle-(radFocus/2)));
+			rArdy=1;
+			}});
+			//$("#radimage").rotate(-Math.ceil(thrusty)+120);
+			}
+
+		};
+		var r=Math.sqrt(Math.pow(50,2)+Math.pow(50,2));
+		var theta=2*Math.tan(50/(2*50));
+		
+		var rFrdy=1;
+		function radarFocus(thrusty){
+		if(rFrdy==1)
+		{
+		rFrdy=0;
+		 $.ajax({url:"../test3.php?query=UPDATE Ships SET radarFocus='"+thrusty+"' WHERE Ships.id="+id,
+			success:function(result){
+			range=Math.ceil(getRadarRange(thrusty));
+			document.getElementById("radarFocusDiv").innerHTML="<div style='width:45%;float:left;'>Radar Focus (degrees): "+thrusty +"</div><div style='width:45%;float:left;'></div><div style='width:45%;float:left;'>Radar Range: "+range+"</div>";
+			radFocus=thrusty;
+			addLineRadar(Math.ceil(-radAngle));
+			addLineRadar(Math.ceil(-radAngle+(radFocus/2)));
+			addLineRadar(Math.ceil(-radAngle-(radFocus/2)));
+			rFrdy=1;
+			}});
+			}
+
+		};
+		function getRadarRange(focus){
+			return (180/focus)*(maxRadarRange/180)*radarwidthrangeratio;
+		};
+		function fireMissile(){
+			query="INSERT INTO Ships (id,thrustStrength,thrustDirection,x,y,lastUpdate,vx,vy,radarAngle,radarFocus,radarPing,type,detonateAt,hp,explosionRadius,name,spawnedBy) Values (NULL,'30','"+thrustDirection+"','"+x+"','"+y+"',NOW(),'0','0','0','0',NOW(),'M',ADDTIME(NOW(),'00:"+Math.floor(missileTime/60)+":"+missileTime%60+".000000'),'1','100','"+document.getElementById('missileName').value+"','"+id+"')";
+			 $.ajax({url:"../test3.php?query="+query,
+			success:function(result){
+			}});
+		};
+		function missileTimer(slider)
+		{
+			missileTime=slider.value;
+			document.getElementById("missileTimerDiv").innerHTML="Timer set to "+missileTime+" seconds.";
+		};
+		
+		var linecount=0;
+		var linesRad=[];
+		function addLineRadar(rotation)
+		{
+		linecount=linecount+1;
+		if (linecount==4) {
+		linecount=1;
+		}
+		rotation=rotation*3.1415/180;
+		if($.inArray(linecount,linesRad)==-1)
+		{
+		linesRad.push(linecount);
+		$("#testery").append("<div class='active-lineR"+linecount+"'></div>");
+		}
+		var length=Math.ceil(0.9*$('#radimage').width()/2);
+		var x1=Math.ceil($('#radimage').position().left+($('#radimage').width()/2));
+		var y1=Math.ceil($('#radimage').position().top+($('#radimage').height()/2));
+		$(".active-lineR"+linecount).css('width', length+'px');
+		$(".active-lineR"+linecount).css('background-color','red');
+		$(".active-lineR"+linecount).css('height','2px');
+		$(".active-lineR"+linecount).css('position','absolute');
+		$(".active-lineR"+linecount).css('top', y1+0.5*length*Math.sin(rotation)+"px");
+		$(".active-lineR"+linecount).css('left', x1-0.5*length*(1-Math.cos(rotation))+"px");
+		$(".active-lineR"+linecount).css('-webkit-transform','rotate('+( rotation ) + 'rad)');
+		};
+		
+		var linecountMap=0;
+		var linesMap=[];
+		function addLineMap(x1,y1,rotation,color)
+		{
+		linecountMap=linecountMap+1;
+		if (linecountMap==5) {
+		linecountMap=1;
+		}
+		rotation=rotation*3.1415/180;
+		if($.inArray(linecountMap,linesMap)==-1)
+		{
+		linesMap.push(linecountMap);
+		$("#testery").append("<div class='active-line"+linecountMap+"'></div>");
+		}
+		var length=getRadarRange(radFocus)/mapScale;
+		var cx=Math.ceil($('#map').position().left+($('#map').width()/2));
+		var cy=Math.ceil($('#map').position().top+($('#map').height()/2));
+		$(".active-line"+linecountMap).css('width', length+'px');
+		$(".active-line"+linecountMap).css('background-color',color);
+		$(".active-line"+linecountMap).css('height','2px');
+		$(".active-line"+linecountMap).css('position','absolute');
+		$(".active-line"+linecountMap).css('top', 5+cy-(y1/mapScale)+0.5*length*Math.sin(rotation)+"px");
+		$(".active-line"+linecountMap).css('left', 5+cx+(x1/mapScale)-0.5*length*(1-Math.cos(rotation))+"px");
+		$(".active-line"+linecountMap).css('-webkit-transform','rotate('+( rotation ) + 'rad)');
+		};
+		
+		var points = [];
+		function addpoint(xin,yin,pointid,color){
+		if($.inArray(pointid,points)==-1)
+		{
+		points.push(pointid);
+		$("#testery").append("<div class='active-point"+pointid+"'></div>");
+		}
+		var cx=Math.ceil($('#map').position().left+($('#map').width()/2));
+		var cy=Math.ceil($('#map').position().top+($('#map').height()/2));
+		$(".active-point"+pointid).css('width', '10px');
+		$(".active-point"+pointid).css('background-color',color);
+		$(".active-point"+pointid).css('height','10px');
+		$(".active-point"+pointid).css('position','absolute');
+		$(".active-point"+pointid).css('top', Math.ceil(cy-yin/mapScale)+"px");
+		$(".active-point"+pointid).css('left', Math.ceil(cx+xin/mapScale)+"px");
+		};
+		
+		function removePoints(){
+		for (var i = 0;i<points.length;i++)
+		{
+			$('[class="active-point'+points[i]+'"]').remove();
+		}
+		points=[];
+		addpoint(x,y,id,'blue');
+		}
+		
+		function upgrade(what){
+		if(spendablePoints>0)
+		{
+			spendablePoints=spendablePoints-1;
+			if(what==="maxthrust")
+			{
+				maxThrust=Math.ceil(maxThrust)+10;
+				$('#thrustPowerSlider').attr('max',maxThrust);
+				query="UPDATE Ships SET spendingPoints=spendingPoints-1, maxThrust="+maxThrust+" WHERE id="+id;
+			 	$.ajax({url:"../test3.php?query="+query,
+				success:function(result){
+				}});
+			}
+			if(what==="maxradarrange")
+			{
+				maxRadarRange=Math.ceil(maxRadarRange)*1.1;
+				query="UPDATE Ships SET spendingPoints=spendingPoints-1, maxRadarRange="+maxRadarRange+" WHERE id="+id;
+			 	$.ajax({url:"../test3.php?query="+query,
+				success:function(result){
+				}});
+			}
+			if(what==="maxradarwidth")
+			{
+				maxRadarWidth=Math.ceil(maxRadarWidth)+5;
+				$('#radarFocusSlider').attr('max',maxRadarWidth);
+				document.getElementById("radarFocusSlider").value=maxRadarWidth;
+				radarFocus(maxRadarWidth);
+				query="UPDATE Ships SET spendingPoints=spendingPoints-1, maxRadarWidth="+maxRadarWidth+" WHERE id="+id;
+			 	$.ajax({url:"../test3.php?query="+query,
+				success:function(result){
+				}});
+			}
+			if(what==="radarwrratio")
+			{
+				radarwidthrangeratio=Math.ceil(radarwidthrangeratio)*1.1;
+				query="UPDATE Ships SET spendingPoints=spendingPoints-1, RadarWidthRatio="+maxwidthrangeratio+" WHERE id="+id;
+			 	$.ajax({url:"../test3.php?query="+query,
+				success:function(result){
+				}});
+			}
+			if(what==="custommissilenames")
+			{
+				radarwidthrangeratio=Math.ceil(radarwidthrangeratio)*1.1;
+				query="UPDATE Ships SET spendingPoints=spendingPoints-1, customMissileNames=1 WHERE id="+id;
+			 	$.ajax({url:"../test3.php?query="+query,
+				success:function(result){
+				}});
+			}
+			if(what==="maxmissiletime")
+			{
+				maxMissileTimer=Math.ceil(maxMissileTimer)+10;
+				//$('#missileTimerSlider').attr('max',maxMissileTimer);
+				query="UPDATE Ships SET spendingPoints=spendingPoints-1, MaxMissileTimer="+maxMissileTimer+" WHERE id="+id;
+			 	$.ajax({url:"../test3.php?query="+query,
+				success:function(result){
+				}});
+			}
+		}
+		else
+		{
+		alert("No points to spend.");
+		}
+		};
+	</script>
+
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+	</head>
+
+	<body style="width:default;height:900px;overflow-x:hidden">
+	<div id="controls" style="width:100%;">
+	   <div style="width:45%;float:left;">
+		<div>
+			<button style="width:25%;float:left" onclick="window.location.replace('http://robertclaus.info')">Back</button>
+			<div style="width:05%;float:left;"> &nbsp; </div>
+			<div style="width:15%;float:left;" id="name">Ship Name</div>
+			<div style="width:15%;float:left;">
+				<div id="hp">Hp:</div>
+				<div id="score">Score:</div>
+			</div>
+			<div style="width:40%;float:left;">
+				<div style="width:45%;float:left;">
+					<div id="x">X:</div>
+					<div id="y">Y:</div>
+				</div>
+				<div style="width:45%;float:left;">
+					<div id="vx">vX:</div>
+					<div id="vy">vY:</div>
+				</div>
+			</div>
+		</div>
+		
+		<br>
+		<img id="image" width="50" height="50" src="Galaga_Blue_Spaceship_achievement.jpg">
+		<div id="thrustAngleDiv">Thrust Angle:</div>
+		<input id="thrustAngleSlider" type="range" min="0" max="360" oninput="thrustAngle(this.value)"/>
+		<div id="thrustPowerDiv">Thrust Power:</div>
+		<input id="thrustPowerSlider" type="range" min="0" max="80" oninput="thrustPower(this)"/>
+		<br>
+		<img id="radimage" width="50" height="50" src="radar.jpg">
+		<br>
+		<div id="radarAngleDiv">Radar Angle:</div>
+		<input id="radarAngleSlider" type="range" min="0" max="360" oninput="radarAngle(this.value)"/>
+		<div id="radarFocusDiv">Radar Focus (degrees)</div>
+		<input id="radarFocusSlider" type="range" min="1" max="180" oninput="radarFocus(this.value)"/>
+		<br>
+		<button onclick="radarPing()">Ping Radar</button>
+		<br>
+		<br>
+		<div id="radarTargets"></div>
+	   </div>
+	   <div style="width:10%;float:left;"> &nbsp;</div>
+	   <div style="width:45%;float:left;">
+		<div>Missiles Terminal velocity: 10m/s Explosion radius: 100</div>
+		<input id="missileTimerSlider" type="range" min="1" max="120" oninput="missileTimer(this)"/>
+		<div>
+			<button style="width:20%;float:left;" onclick="fireMissile()">Fire Missile!</button>
+			<div style="width:05%;float:left;"> &nbsp; </div>
+			<textarea style="width:20%;height:15px;float:left;" id="missileName"></textarea>
+			<div style="width:05%;float:left;"> &nbsp; </div>
+			<div style="width:40%;float:left;" id="missileTimerDiv">Timer set to 10 seconds</div>
+		</div>
+		<br>
+		<div id="testery"></div>
+		<br>
+		<img id="map" width="500" height="500" src="radar.jpg">
+		<br>
+		<button onclick="removePoints()">Remove Old Points</button>
+	    </div>
+	</div>
+	<div id="docked" hidden=true>
+
+		<div> Not functional yet.</div>
+		<div>Docked in Center.</div>
+		<div id="spendablePoints">Points to spend:</div>
+		<button onclick="upgrade('maxthrust')">Upgrade max thrust.</button>
+		<br>
+		<button onclick="upgrade('maxradarrange')">Upgrade max radar range.</button>
+		<br>
+		<button onclick="upgrade('maxradarwidth')">Upgrade max radar width.</button>
+		<br>
+		<button onclick="upgrade('radarwrratio')">Upgrade radar width/range ratio.</button>
+		<br>
+		<button onclick="upgrade('maxmissiletime')">Upgrade max missile timer.</button>
+		<br>
+		<button onclick="upgrade('custommissilenames')">Allow custom Missile Names.</button>
+		<br>
+		<button onclick="upgrade('missileradius')">Upgrade missile explosion radius.</button>
+		<br>
+		<button onclick="upgrade('missilespeed')">Upgrade missile speed.</button>
+
+	</div>
+	</body>
+</html>

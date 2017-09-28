@@ -1,0 +1,63 @@
+<script src= "http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<div>
+<div id="title"></div>
+<div id="desc"></div>
+<div id="name"></div>
+</div>
+<br/>
+<button onclick="window.location.href='MafiaMain.html'">Back</button>
+
+<script>
+function pickRole()
+{
+	var room = parse("room");
+	var name = parse("name");
+	if(name=="")
+	{
+		name="Null";
+	}
+	console.log(room);
+	var query = "../test3.php?query=SELECT %20id,%20Title,%20Description%20FROM%20MafiaSimple WHERE Room="+room+" AND Assigned=0 ORDER BY RAND() LIMIT 1";
+
+	$.ajax({url:query,
+			dataType:'json',
+			success:function(result){
+				console.log(result);
+				var id = result[0];
+				console.log(id);
+				if(id==undefined)
+				{
+				$('#title').html("No roles left in this room.");
+				return;
+				}
+				$('#title').html(result[1]);
+				$('#desc').html(result[2]);
+				$('#name').html("The name you chose was "+name);
+				query= "../test3.php?query=UPDATE MafiaSimple SET Assigned = 1, Name='"+name+"' WHERE id="+id;
+				console.log(query);
+				$.ajax({url:query,
+					dataType:'json',
+					success:function(result){
+						console.log(result);
+					}
+		  		});
+			}
+		  });
+}
+
+function parse(val) {
+    var result = "Not found",
+        tmp = [];
+    location.search
+    .substr(1)
+        .split("&")
+        .forEach(function (item) {
+        tmp = item.split("=");
+        if (tmp[0] === val) result = decodeURIComponent(tmp[1]);
+    });
+    return result;
+}
+
+pickRole();
+</script>

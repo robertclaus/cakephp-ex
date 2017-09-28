@@ -1,0 +1,70 @@
+<script type="text/javascript" src="//code.jquery.com/jquery-1.6.4.js"></script>
+<script type="text/javascript" src="TableTopSockets.js"></script>
+<script type="text/javascript" src="Hanabi.js"></script>
+<link rel="stylesheet" type="text/css" href="Hanabi.css" />
+
+<button onclick="sendConnectionRequests()">
+Send
+</button>
+
+<button onclick="generateDeck()">
+Generate
+</button>
+
+<button onclick="shuffleDeck()">
+Shuffle
+</button>
+
+<button onclick="lockDeck()">
+Lock
+</button>
+
+<button onclick="unlockDeck()">
+Unlock
+</button>
+
+<button onclick="unlockDeck()">
+Unlock
+</button>
+
+<button onclick="drawCard()">
+Draw
+</button>
+
+<button onclick="discardCard()">
+Discard
+</button>
+
+<button onclick="playCard()">
+Play
+</button>
+
+<br></br>
+<div id="name"></div>
+
+
+<br/>
+<br/>
+
+Field
+<div id="field" class="zone">
+
+<div class="card red">5</div>
+<div class="card red">5</div>
+<div class="card red">5</div>
+
+</div>
+
+Discard
+<div id="discard" class="zone"></div>
+<br></br>
+
+Hands
+<div id="hands" class="zone"></div>
+<br/></br>
+
+Deck
+<div id="deck" class="zone">
+	<div class="card back">30</div>
+</div>
+

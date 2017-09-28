@@ -1,0 +1,27 @@
+<head>
+	<script type="text/javascript" src="//code.jquery.com/jquery-2.1.0.js"></script>
+	<script src="camels.js"></script>
+	<link rel="stylesheet" href="camels.css">
+</head>
+
+<body>
+<div class="simulator">
+    <button id='red' onClick="selector('red')">Red</button>
+    <button id='white' onClick="selector('white')">White</button>
+    <button id='green' onClick="selector('green')">Green</button>
+    <button id='blue' onClick="selector('blue')">Blue</button>
+    <button id='yellow' onClick="selector('yellow')">Yellow</button>
+    <div id='boxer' onload="functionA()"></div>
+    <button onClick="myFunction()">Recalculate</button>
+       <span class="tint">
+			<img id="image" src="http://www.fotor.com/fotor.test/65e796465d3447f8bdda3ac58794fd50/65e796465d3447f8bdda3ac58794fd50_p_400.png"/>
+		</span>
+</div>
+	<div class="description">
+		This is a calculator for probablities in the game Camels (C)up.  
+		Select which camel to place using the color buttons at the top of the grid.  
+		Then click on a column to place the camel.  The camels are racing to the right.
+		Once all the camels are placed, the percent at the top will reflect the odds of each camel ending up in first place at the end of the round.
+	</div>
+</body>
+

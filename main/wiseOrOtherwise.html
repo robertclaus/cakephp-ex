@@ -1,0 +1,149 @@
+<h1>Wise or otherwise</h1>
+
+	<script src= "http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">
+	</script>
+
+<script>
+	var room = 1;
+	var query;
+	var start;
+	var round;
+	var name='No Name Entered';
+	function submit(){
+		query="INSERT INTO WiseOrOtherwise (id, phraseStart, phraseEnd, player, round) VALUES (NULL, '"+start+"', '"+$("#typedIn").val()+"', '"+name+"', '"+round+"')";
+		//query = "SELECT * FROM WiseOrOtherwise";
+		document.getElementById("typedIn").value=$("#typedIn").val()+"   - Submitted";
+		$.ajax({url:"test3.php?query="+query,
+			dataType:'json',
+			success:function(result){}
+		});
+	};
+
+	var tableText;
+	setInterval(function () {
+		//alert("test");
+		  $.ajax({url:"test3.php?query=SELECT round, start, host, ready FROM WiseOrOtherwiseRooms WHERE id=1",
+			dataType:'json',
+			success:function(result){
+			document.getElementById("round").innerHTML="Round: "+result[0];
+			start=result[1];
+			round=result[0];
+
+			
+			tableText="<tr><td>Start</td><td>End</td><td>Vote</td></tr>";
+				$.ajax({url:"test3.php?query=SELECT phraseStart,phraseEnd,player,id,votes FROM WiseOrOtherwise WHERE round="+round,
+					dataType:'json',
+					async:false,
+					success:function(result){
+						var i=0;
+						while(i<result.length){
+							tableText=tableText+"<tr><td>"+result[i]+"</td><td>"+result[i+1]+"</td>";
+							tableText=tableText+"<td><button onclick='vote("+result[i+3]+","+result[i+4]+")'>Votes: "+result[i+4]+"</button></td></tr>";
+							i=i+5;
+						}
+				}});
+
+			document.getElementById("table").innerHTML=tableText;
+			
+			if(result[2].length<1)
+			{
+			document.getElementById("callHost").style.visibility="visible";
+			}else{
+			document.getElementById("callHost").style.visibility="hidden";
+			}
+			if(name == result[2])
+			{
+			document.getElementById("host").innerHTML="You Are Host.";
+			document.getElementById("table").style.visibility="visible";
+			document.getElementById("nextRound").style.visibility="visible";
+			document.getElementById("oVote").style.visibility="visible";
+			updateStart();
+			}
+			else
+			{
+			document.getElementById("start").value=start;
+			document.getElementById("host").innerHTML="Not host.  Current host: "+result[2];
+			document.getElementById("table").style.visibility="hidden";
+			document.getElementById("nextRound").style.visibility="hidden";
+			document.getElementById("oVote").style.visibility="hidden";
+			}
+			if(result[3]==='1')
+			{
+				document.getElementById("table").style.visibility="visible";
+			}
+
+			if(result[2]==="")
+			{
+				document.getElementById("sub").style.visibility="hidden";
+				document.getElementById("table").style.visibility="hidden";
+		  	}else{
+				document.getElementById("sub").style.visibility="visible";
+			}
+
+
+			$.ajax({url:"test3.php?query=SELECT SUM(votes) FROM WiseOrOtherwise WHERE round='"+round+"' AND player='"+name+"'",
+					dataType:'json',
+					async:false,
+					success:function(result){
+						document.getElementById("score").innerHTML="Score: "+result[0];
+				}});
+
+	
+			}});
+		},1000);
+
+	function vote(id,vs){
+		vs=vs+1;
+		query="UPDATE WiseOrOtherwise SET votes="+vs+" WHERE  id="+id;
+		$.ajax({url:"test3.php?query="+query,
+			success:function(result){}
+		});
+	}
+	function updateStart(){
+		query="UPDATE WiseOrOtherwiseRooms SET start='"+$("#start").val()+"' WHERE  id="+1;
+		$.ajax({url:"test3.php?query="+query,
+			success:function(result){}
+		});
+	}
+
+	function newRound(){
+		query="UPDATE WiseOrOtherwiseRooms SET host='',start='Enter beginning here',round='"+(parseInt(round)+1)+"' WHERE id="+1;
+		$.ajax({url:"test3.php?query="+query,
+			success:function(result){}
+		});
+	}
+
+	function setHost(){
+		query="UPDATE WiseOrOtherwiseRooms SET host='"+name+"' WHERE  id="+1;
+		$.ajax({url:"test3.php?query="+query,
+			success:function(result){}
+		});
+	}
+
+	function openVoting(){
+		query="UPDATE WiseOrOtherwiseRooms SET ready='1' WHERE  id="+1;
+		$.ajax({url:"test3.php?query="+query,
+			success:function(result){}
+		});
+	}
+
+	function changeName(){
+		name=$("#name").val();
+	}
+</script>
+<textarea id='name' style="width:20%;height:3%" onchange="changeName()">Enter Name Here.</textarea><br>
+<div id='host'>???</div>
+<div id='round'>Round: ?</div>
+<div id='score'>Score: ?</div>
+<br>
+<textarea id='start' style="width:40%;height:5%">TestArea</textarea>
+<br>
+<textarea id='typedIn' style="width:40%;height:20%"></textarea>
+<br>
+<button id='sub' style="width:40%;height:70px;visibility:'hidden'" onclick="submit()">Submit!</button>
+<button id='callHost' style="width:40%;height:70px;visibility:'hidden'" onclick="setHost()">I am the new host.</button>
+<button id='nextRound' style="width:40%;height:70px;visibility:'hidden'" onclick="newRound()">Next Round.</button>
+<button id='oVote' style="width:40%;height:70px;visibility:'hidden'" onclick="openVoting()">Open Voting.</button>
+<table id='table' style="width:100%;visibility:'hidden'">
+</table>
+		

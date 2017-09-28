@@ -1,0 +1,74 @@
+<script src= "http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<div>
+	<table>
+		<thead>
+			<th>Player Name</th>
+			<th>Role</th>
+			<th>Assigned?</th>
+		</thead>
+		<tbody id="tbody">
+		</tbody>
+	</table>
+</div>
+
+<script>
+
+function newPlayer(name,role,assigned)
+{
+var tr='<tr class="player">';
+var in1='<td>'+name+'</td>';
+var in2='<td>'+role+'</td>';
+var in3='<td>'+(assigned=="1")+'</td>';
+var tre='</tr>';
+$("#tbody").append(tr+in1+in2+in3+tre);
+}
+
+function parse(val) {
+    var result = "Not found",
+        tmp = [];
+    location.search
+    .substr(1)
+        .split("&")
+        .forEach(function (item) {
+        tmp = item.split("=");
+        if (tmp[0] === val) result = decodeURIComponent(tmp[1]);
+    });
+    return result;
+}
+
+var unassigned=100;
+function updatePlayers()
+{
+	if(unassigned==0){return;}
+	var unassignedCount=0;
+	console.log("Test");
+	var room= parse("room");
+	var query = "../test3.php?query=SELECT Name, Title, Assigned FROM MafiaSimple WHERE Room="+room;
+
+	$.ajax({url:query,
+			dataType:'json',
+			success:function(result){
+				$("#tbody").empty();
+				console.log(result);
+				console.log(result.length);
+				for(var i=0;i<result.length;i=i+3)
+				{
+					console.log(result[i]+","+result[i+1]);
+					newPlayer(result[i],result[i+1],result[i+2]);
+					if(result[i+2]==="0")
+					{
+						unassignedCount++;
+					}
+				}
+				console.log($('#tbody'));
+				unassigned=unassignedCount;
+			},
+			failure:function(){alert("Error");}
+		});
+	
+}
+updatePlayers();
+window.onload=function(){setInterval(updatePlayers,2000)};
+
+</script>

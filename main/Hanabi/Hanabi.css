@@ -1,0 +1,63 @@
+.card {
+    padding-right: 1em;
+    padding-bottom: 1.5em;
+    padding-left: .25em;
+    padding-top: .25em;
+    font-size: xx-large;
+	display: inline-block;
+    font-size: 3em;
+	border-style:solid;
+}
+
+.play{
+	border-style:outset;
+	cursor:pointer;
+}
+
+.discard{
+	border-style:outset;
+	cursor:pointer;
+}
+
+.color-hint{
+	border-style:outset;
+	cursor:pointer;
+}
+
+.number-hint{
+	border-style:outset;
+	cursor:pointer;
+}
+
+.zone {
+	padding-bottom: 4em;
+	padding-top: 1em;
+}
+
+.red {
+	background-color: red;
+}
+
+.blue {
+	background-color: blue;
+}
+
+.white{
+	background-color: white;
+}
+
+.green{
+	background-color: green;
+}
+
+.yellow{
+	background-color: yellow;
+}
+
+.rainbow{
+	background-color: purple;
+}
+
+.back{
+	background-color: gray;
+}

@@ -1,0 +1,56 @@
+<script src= "http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<div>This game runs on a PHP script that runs the physics in the background.  The client updates controls and receives physics updates by polling a mySQL database.  Create or select an existing ship to start.</div>
+<div>In the game, you move in the direction of the blue line controlled by the first slider.  How fast you move is determined by the second slider.  You can only see other ships and missiles by pointing your radar and clicking scan.  Missiles move in the direction the blue line is facing and explode in a 10 unit radius after the set timer.  Score allows you to purchase upgrades at the center of the map.</div>
+<br />
+
+<div style="width:50%;">
+	<button style="width:30%;height:40px;float:left" onclick="newShip()"> New Ship!</button>
+	<div style="width:10%;float:left">&nbsp;</div>
+	<div style="width:30%;float:left">Enter name for new ship: </div>
+	<textarea style="width:30%;height:25px;float:left" id='newName'></textarea>
+</div>
+<div style="width:50%;">&nbsp;</div>
+<br>
+<div id='ships'>Existing Ships:</div>
+<div id='test' ></div>
+<script>
+window.onload = function()
+{
+
+$('#test').empty();
+ $.ajax({url:'../test3.php?query=SELECT id,name FROM Ships WHERE type="S"',
+			dataType:'json',
+			success:function(result){
+			i=0;
+			while(i<result.length) {//>
+				if(result[i+1]!="")
+				{
+				$('#test').append("<button style='width:30%;height:30px;float:left' onclick='enterShip("+result[i]+")'>"+result[i+1]+"</button>");
+				//$('#test').append("<div style='width:60%;height:30px;float:left;'>&nbsp;</div>");
+				}
+				else
+				{
+				$('#test').append("<button style='width:30%;height:30px;float:left' onclick='enterShip("+result[i]+")'>"+result[i]+"</button>");
+				//$('#test').append("<div style='width:60%;height:30px;float:left;'>&nbsp;</div>");
+				}
+				i=i+2;
+			}
+		  }});
+		  }
+		  
+function enterShip(id){
+window.top.location.replace("game.html?id="+id);
+};
+function newShip(){
+	 $.ajax({url:'../test3.php?query=INSERT INTO Ships (id,name) VALUES (NULL,"'+document.getElementById('newName').value+'")',
+			dataType:'json',
+			success:function(result){
+			//i=0;
+			//while(i<result.length) {//>
+			//	$('#test').append("<button onclick='enterShip("+result[i]+")'>Ship "+result[i]+"</button>");
+			//	i=i+1;
+			//}
+		  }});
+		  window.onload();
+}
+</script>

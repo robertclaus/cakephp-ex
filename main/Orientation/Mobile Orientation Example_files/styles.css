@@ -1,0 +1,136 @@
+	#mf-headerBar{
+		padding-left:20px;
+		padding-right:20px;		
+		width:100%;
+		background-color:#29333a;
+		}
+		
+	#mf-headerBar img{
+		padding-top:40px;
+		padding-bottom:40px;
+		}			
+	
+	#mf-footerBar{
+		
+		font-family: "ff-din-web",Helvetica,Arial,"Lucida Grande",sans-serif !important;
+    	font-style: normal !important;
+		color:#c7c7c7;
+		font-size:13px;
+		width:100%;
+		background-color:#29333a;
+		}
+		
+	#mf-footerBar ul{
+		list-style: none;
+		margin:0;
+		padding:0;
+		}	
+		
+	#mf-footer{
+		position:relative;
+		width:960px;
+		margin: 0 auto;
+		}
+		
+	#mf-footer a:link, #mf-footer a:active, #mf-footer a:visited{
+		text-decoration:none;
+		color:#c7c7c7;
+		}	
+		
+	#mf-linksBar{
+		width:100%;
+		height:70px;
+		}
+			
+    #mf-linksBar ul{
+    	padding:0px;
+    }
+    
+    #mf-linksBar li{
+		float: left;
+		list-style: none;
+		padding-right:15px;
+		line-height:70px;
+	}
+	
+    #mf-linksBar a:hover{
+    	color:#fff; 
+		-o-transition:.5s;
+		-ms-transition:.5s;
+		-moz-transition:.5s;
+		-webkit-transition:.5s;
+		transition:.5s;
+        text-decoration:none;             
+    }
+	
+	.mf-socialIcons{
+        margin-left:10px;
+        margin-top:20px;
+        width:25px;
+        height:25px;
+		
+    }
+	
+	#mf-logosBar{
+	}
+		
+	#mf-logosBar ul{
+		padding-top:40px;
+	}
+	
+	#mf-logosBar li{
+		width:25%;
+		float:left;
+	}
+	
+	#mf-logosBar .mf-boldHeader{
+    	font-weight:400;
+    	text-transform:uppercase;
+        font-size:13px;
+	}	
+	
+	#mf-logosBar span{
+		display:block;
+		width:80%;
+		line-height:16px;
+	}	
+	
+	#mf-logosBar .mf-footerLogos{
+        margin-top:10px;
+        margin-bottom:35px;
+        height:35px;
+    }
+	
+	#mf-copyrightBar{
+		font-size:12px;
+		color:#8b8b8b;
+		padding-bottom:25px;
+		}
+		
+	#mf-copyrightBar ul{
+		width:100%;
+		overflow:auto;
+	}
+	
+	#mf-copyrightBar li{
+		width:50%;
+		float:left;
+		line-height:16px;
+	}
+			
+		
+	#mf-copyrightBar a:link, #mf-copyrightBar a:active, #mf-copyrightBar a:visited{
+		text-decoration:none;
+		color:#8b8b8b;
+		}	
+
+    #mf-copyrightBar a:hover{
+    	color:#c7c7c7; 
+		-o-transition:.5s;
+		-ms-transition:.5s;
+		-moz-transition:.5s;
+		-webkit-transition:.5s;
+		transition:.5s;
+        text-decoration:none;             
+    }
+	

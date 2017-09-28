@@ -1,0 +1,105 @@
+<html>
+  <head>
+    <script type="text/javascript"></script>
+	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="http://hammerjs.github.io/dist/hammer.min.js"></script>
+	<script type="text/javascript" src="http://hammerjs.github.io/dist/hammer-time.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>	<script src="Tasker/libraries/jquery.hammer.js"></script>
+	<script src="Tasker/Constants.js"></script>
+	<script src="Tasker/InitializeCalendar.js"></script>
+	<script src="Tasker/AuthAndInitialize.js"></script>
+	<script src="Tasker/MainList.js"></script>
+	<script src="Tasker/TaskManipulation.js"></script>
+	<script src="Tasker/NewTaskForm.js"></script>
+    <script src="https://apis.google.com/js/client.js?onload=checkAuth"></script>
+	<link rel="stylesheet" type="text/css" href="Tasker/CheckBoxes.css">
+	<style>
+		button{
+			 background: black;
+    border: 2px solid gray;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 6px;
+    margin-right: 10px;
+    text-align: center;
+	color:white;
+	margin-top:5;
+		}
+		button:hover {
+		background: darkgreen;
+    box-shadow: inset 0px 0px 0px 4px black;
+		}
+		
+				input[type=button]{
+			 background: black;
+    border: 2px solid gray;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 6px;
+    margin-right: 10px;
+    text-align: center;
+	color:white;
+	margin-top:5;
+	margin-left:5em;
+		}
+		input[type=button]:hover {
+		background: darkgreen;
+    box-shadow: inset 0px 0px 0px 4px black;
+		}
+		
+		#output {
+			color:white;
+			font-size:x-large;
+		}
+		
+		.Task {
+			border-top:gray solid thin;
+			margin-top:.5em;
+			padding-top: .7em;
+			padding-bottom: .3em;
+			
+		}
+		
+		#TaskForm {
+			background: black;
+			border: white thin solid;
+			margin: 10px;
+			padding: 10px;
+		}
+		
+		#output {
+		min-height:25em;
+		}
+		
+		.Wrapper {
+		margin-bottom:3em;
+		}
+	</style>
+  </head>
+  <body>
+  
+  <!-- Used by AuthAndInitialize to take care of Google authorization-->
+    <div id="authorize-div" style="display: none">
+      <span>Authorize access to Google Calendar API</span>
+      <!--Button for the user to click to initiate auth sequence -->
+      <button id="authorize-button" onclick="handleAuthClick(event)">
+        Authorize
+      </button>
+    </div>
+	<!-- End of Authorization Section -->
+	
+
+	<div style="display:inline" id="FilterByUserGroup"></div>
+	<button style="display:inline; float:right;" onclick="toggleTaskForm()">+ Add Task</button>
+
+	
+	
+	<pre id="output"></pre>
+	
+
+	<div id="TaskForm">
+	
+	</div>
+	
+  </body>
+</html>
