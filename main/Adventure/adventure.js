@@ -83,6 +83,8 @@ function enterCode(){
 								initializeTeamAssociation();
 						}});
 					}
+				} else {
+					alert("Bad Code!");
 				}
 	}});
 }
@@ -135,6 +137,10 @@ $(document).ready(function(){
 	
 	changeTeamName(findGetParameter("team"));
 	initializeTeamAssociation();
+	
+	window.setInterval(function(){
+		getLocation();
+	},10*1000);
 });
 
 
@@ -169,4 +175,9 @@ function getLocation() {
 function showPosition(position) {
     console.log("Latitude: " + position.coords.latitude + 
     "    Longitude: " + position.coords.longitude); 
+	var n=new Date();
+	$.ajax({url:url+'sql.php?query=INSERT INTO Location VALUES ('+teamId+','+position.coords.latitude+','+position.coords.longitude+','+n.toISOString().slice(0, 19).replace('T', ' ')+');',
+							dataType:'json',
+							success:function(result){
+	}});
 }
