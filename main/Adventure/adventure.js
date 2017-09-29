@@ -65,6 +65,7 @@ function enterCode(){
 			success:function(result){
 				if(result.length>1 && result[2]!=null) //Use current section as a check that we found a valid puzzle
 				{
+					alert("Correct Code!");
 					if(result[0]!=null)//New Puzzle, not new section
 					{
 						$.ajax({url:url+'sql.php?query=UPDATE Team SET CurrentPuzzle=(SELECT Next.PuzzleId FROM Puzzle AS Current LEFT OUTER JOIN Puzzle AS Next ON (Current.NextPuzzleId=Next.PuzzleId) WHERE Current.PuzzleId='+currentPuzzle+' AND Current.CompletionCode="'+$("#code").val()+'" AND TeamId='+teamId+') WHERE TeamId='+teamId,
@@ -94,7 +95,7 @@ function enterCode(){
 						});
 					}
 				} else {
-					alert("Bad Code!");
+					alert("Wrong Code!");
 				}
 	}});
 }
