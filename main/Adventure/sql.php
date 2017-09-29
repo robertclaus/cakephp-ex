@@ -6,7 +6,7 @@ $query = $_GET["query"];
 $db_host = '172.30.225.108';
 $db_user = 'cakephp';
 $db_pass = 'hbwFKi4nhTcSMhb3';
-$db_name = 'mysql';
+$db_name = 'default';
 //$query = 'SELECT * FROM Ships';
 
  mysql_connect($db_host,$db_user,$db_pass) or die(mysql_error());
