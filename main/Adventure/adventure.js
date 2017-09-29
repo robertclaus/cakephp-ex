@@ -16,7 +16,7 @@ function initializeTeamAssociation(){
 				if(result.length>2)
 				{
 					teamId=result[0];
-					teamName=result[1];
+					changeTeamName(result[1]);
 					currentPuzzle=result[2];
 					sectionName=result[4];
 					
@@ -57,6 +57,12 @@ function enterCode(){
 function setImage(newImage){
 	currentImage=newImage;
 	$("#img").attr("src",url+"images/"+sectionName+"/"+currentImage);
+}
+
+function changeTeamName(newName){
+	$("#currentTeamName").val(newName);
+	$("#teamName").val("");
+	teamName=newName;
 }
 
 $(document).ready(function(){
