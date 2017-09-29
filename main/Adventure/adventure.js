@@ -23,6 +23,11 @@ function initializeTeamAssociation(){
 					setImage(result[3]);
 					teamInitialized=true;
 				}
+				else
+				{
+					enterEditTeamMode();
+					alert("Not a valid team name! :(");
+				}
 	}});
 }
 
@@ -65,14 +70,32 @@ function changeTeamName(newName){
 	teamName=newName;
 }
 
+var editMode=false;
+function enterEditTeamMode(){
+	$("#currentTeamName").hide();
+	$("#newTeamName").show();
+	$("#changeTeam").innerHTML="Change";
+	editMode=true;
+}
+
+function exitEditTeamMode(){
+	$("#currentTeamName").show();
+	$("#newTeamName").hide();
+	$("#changeTeam").innerHTML="Select";
+	editMode=false;
+}
+
 $(document).ready(function(){
 	
-	var wto;
-	$('#teamName').change(function() {
-	  clearTimeout(wto);
-	  wto = setTimeout(function() {
-		initializeTeamAssociation();
-	  }, 500);
+	$("#changeTeam").click(function(){
+		if(editMode){
+			exitEditTeamMode();
+			initializeTeamAssociation();
+		}
+		else
+		{
+			enterEditTeamMode();
+		}
 	});
 	
 	var wto2;

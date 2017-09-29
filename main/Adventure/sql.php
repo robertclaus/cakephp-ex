@@ -3,7 +3,7 @@
 $query = $_GET["query"];
 //echo $query;
 //echo "<br />";
-$db_host = '172.30.225.108';
+$db_host = 'mysql';
 $db_user = 'cakephp';
 $db_pass = 'hbwFKi4nhTcSMhb3';
 $db_name = 'default';
