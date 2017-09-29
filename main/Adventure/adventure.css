@@ -49,6 +49,10 @@ h3 {
 	margin-left:3em;
 }
 
+#fullSizeImage {
+	font-size:3em;
+}
+
 #submitCode {
 	vertical-align:top;
 	font-size: 3em;

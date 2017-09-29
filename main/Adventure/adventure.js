@@ -102,7 +102,8 @@ function enterCode(){
 function setImage(newImage){
 	$("#img").attr("src",url+"loading.jpg");
 	currentImage=newImage;
-	$("#img").attr("src",url+"images/"+sectionName+"/"+currentImage);
+	$("#img").attr("src",url+"images_small/"+sectionName+"/"+currentImage);
+	$("#fullSizeImage").attr("href",url+"images/"+sectionName+"/"+currentImage);
 }
 
 function changeTeamName(newName){
@@ -152,6 +153,8 @@ $(document).ready(function(){
 	window.setInterval(function(){
 		getLocation();
 	},60*1000);
+	
+	
 	
 	getLocation();
 });
