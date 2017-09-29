@@ -1,5 +1,5 @@
 
-var url="http://php-robertclaus.rhcloud.com/Adventure/"
+var url="http://cakephp-mysql-persistent-robert.7e14.starter-us-west-2.openshiftapps.com/main/Adventure/"
 
 var teamName;
 var teamId;

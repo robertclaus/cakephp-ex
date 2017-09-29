@@ -3,16 +3,16 @@
 $query = $_GET["query"];
 //echo $query;
 //echo "<br />";
-$db_host = '127.13.106.2';
-$db_user = 'adminAvyYBav';
-$db_pass = 'MT1_ZPawpCfF';
-$db_name = 'quest';
+$db_host = '172.30.225.108';
+$db_user = 'cakephp';
+$db_pass = 'hbwFKi4nhTcSMhb3';
+$db_name = 'mysql';
 //$query = 'SELECT * FROM Ships';
 
  mysql_connect($db_host,$db_user,$db_pass) or die(mysql_error());
 //$query = $_GET["query"]; 
 //$server = $dburl;
-//$user = 'adminAvyYBav';
+//$user = 'cakephp';
 //$pass = 'MT1_ZPawpCfF';
 //$dbname = 'php';
 $arr = array();
