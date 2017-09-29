@@ -1,4 +1,6 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+
 
 $query = $_GET["query"];
 //echo $query;
@@ -49,7 +51,7 @@ if ($result->num_rows === 0) {
     // Oh, no rows! Sometimes that's expected and okay, sometimes
     // it is not. You decide. In this case, maybe actor_id was too
     // large? 
-    echo [];
+    echo "[]";
     exit;
 }
 

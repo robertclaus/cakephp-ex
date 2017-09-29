@@ -1,5 +1,14 @@
+var simulate=false;
+var simulatedImage=1;
 
-var url="http://cakephp-mysql-persistent-robert.7e14.starter-us-west-2.openshiftapps.com/main/Adventure/"
+
+var url="http://cakephp-mysql-persistent-robert.7e14.starter-us-west-2.openshiftapps.com/main/Adventure/";
+if(simulate)
+{
+	url="file:///A:/Github/PHP/main/Adventure/";
+}
+
+
 
 var teamName;
 var teamId;
@@ -10,7 +19,16 @@ var currentImage;
 var teamInitialized=false;
 
 function initializeTeamAssociation(){
-	$.ajax({url:'sql.php?query=SELECT TeamId,TeamName,CurrentPuzzle,Image,Section.Name FROM Team LEFT OUTER JOIN Puzzle ON (Team.CurrentPuzzle=Puzzle.PuzzleId) LEFT OUTER JOIN Section ON (Puzzle.SectionId=Section.SectionId) WHERE TeamName="'+$("#teamName").val()+'"',
+	if(simulate)
+	{
+		teamId=1;
+		changeTeamName(teamName);
+		currentPuzzle=1;
+		sectionName="Capital";
+		setImage((simulatedImage)+".jpg")
+		return;
+	}
+	$.ajax({url:url+'sql.php?query=SELECT TeamId,TeamName,CurrentPuzzle,Image,Section.Name FROM Team LEFT OUTER JOIN Puzzle ON (Team.CurrentPuzzle=Puzzle.PuzzleId) LEFT OUTER JOIN Section ON (Puzzle.SectionId=Section.SectionId) WHERE TeamName="'+$("#teamName").val()+'"',
 			dataType:'json',
 			success:function(result){
 				if(result.length>2)
@@ -32,7 +50,17 @@ function initializeTeamAssociation(){
 }
 
 function enterCode(){
-	$.ajax({url:'sql.php?query=SELECT Next.PuzzleId,Next.Image,Current.SectionId,TeamSectionOrder.NextSectionId FROM Team LEFT OUTER JOIN Puzzle AS Current ON (CurrentPuzzle=Current.PuzzleId AND CompletionCode="'+$("#code").val()+'") LEFT OUTER JOIN Puzzle AS Next ON (Current.NextPuzzleId=Next.PuzzleId) LEFT OUTER JOIN TeamSectionOrder ON (Current.SectionId=TeamSectionOrder.CurrentSectionId AND Team.TeamId=TeamSectionOrder.TeamId) WHERE Team.TeamId='+teamId,
+	if(simulate)
+	{
+		simulatedImage++;
+		if(simulatedImage==4)
+		{simulatedImage=1;}
+		$("#code").val("");
+		initializeTeamAssociation();
+		return;
+	}
+	
+	$.ajax({url:url+'sql.php?query=SELECT Next.PuzzleId,Next.Image,Current.SectionId,TeamSectionOrder.NextSectionId FROM Team LEFT OUTER JOIN Puzzle AS Current ON (CurrentPuzzle=Current.PuzzleId AND CompletionCode="'+$("#code").val()+'") LEFT OUTER JOIN Puzzle AS Next ON (Current.NextPuzzleId=Next.PuzzleId) LEFT OUTER JOIN TeamSectionOrder ON (Current.SectionId=TeamSectionOrder.CurrentSectionId AND Team.TeamId=TeamSectionOrder.TeamId) WHERE Team.TeamId='+teamId,
 			dataType:'json',
 			success:function(result){
 				if(result.length>1 && result[2]!=null) //Use current section as a check that we found a valid puzzle
@@ -65,23 +93,25 @@ function setImage(newImage){
 }
 
 function changeTeamName(newName){
-	$("#currentTeamName").val(newName);
+	$("#currentTeamName").text(newName);
+	$("#newTeamName").val(newName);
 	$("#teamName").val("");
 	teamName=newName;
+	insertParam("team", teamName);
 }
 
 var editMode=false;
 function enterEditTeamMode(){
 	$("#currentTeamName").hide();
 	$("#newTeamName").show();
-	$("#changeTeam").innerHTML="Change";
+	$("#changeTeam").html("Select");
 	editMode=true;
 }
 
 function exitEditTeamMode(){
 	$("#currentTeamName").show();
 	$("#newTeamName").hide();
-	$("#changeTeam").innerHTML="Select";
+	$("#changeTeam").html("Change");
 	editMode=false;
 }
 
@@ -89,6 +119,7 @@ $(document).ready(function(){
 	
 	$("#changeTeam").click(function(){
 		if(editMode){
+			changeTeamName($("#newTeamName").val());
 			exitEditTeamMode();
 			initializeTeamAssociation();
 		}
@@ -98,13 +129,31 @@ $(document).ready(function(){
 		}
 	});
 	
-	var wto2;
-	$('#code').change(function() {
-	  clearTimeout(wto2);
-	  wto2 = setTimeout(function() {
+	$("#submitCode").click(function() {
 		enterCode();
-	  }, 500);
 	});
-
+	
+	changeTeamName(findGetParameter("team"));
 	initializeTeamAssociation();
 });
+
+
+
+
+function findGetParameter(parameterName) {
+    var result = null,
+        tmp = [];
+    location.search
+        .substr(1)
+        .split("&")
+        .forEach(function (item) {
+          tmp = item.split("=");
+          if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+        });
+    return result;
+}
+
+function insertParam(key, value)
+{
+	history.pushState(null, null, "?"+key+"="+teamName);
+}
