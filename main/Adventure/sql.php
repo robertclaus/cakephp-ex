@@ -31,8 +31,8 @@ if ($mysqli->connect_errno) {
     // You might want to show them something nice, but we will simply exit
     exit;
 }
-
-if (!$result = $mysqli->query($query)) {
+$result = $mysqli->query($query)
+if (!$result) {
     // Oh no! The query failed. 
     echo "Sorry, the website is experiencing problems.";
 

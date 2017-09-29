@@ -28,7 +28,7 @@ function initializeTeamAssociation(){
 		setImage((simulatedImage)+".jpg")
 		return;
 	}
-	$.ajax({url:url+'sql.php?query=SELECT TeamId,TeamName,CurrentPuzzle,Image,Section.Name FROM Team LEFT OUTER JOIN Puzzle ON (Team.CurrentPuzzle=Puzzle.PuzzleId) LEFT OUTER JOIN Section ON (Puzzle.SectionId=Section.SectionId) WHERE TeamName="'+$("#teamName").val()+'"',
+	$.ajax({url:url+'sql.php?query=SELECT TeamId,TeamName,CurrentPuzzle,Image,Section.Name FROM Team LEFT OUTER JOIN Puzzle ON (Team.CurrentPuzzle=Puzzle.PuzzleId) LEFT OUTER JOIN Section ON (Puzzle.SectionId=Section.SectionId) WHERE TeamName="'+$("#currentTeamName").text()+'"',
 			dataType:'json',
 			success:function(result){
 				if(result.length>2)
@@ -67,7 +67,7 @@ function enterCode(){
 				{
 					if(result[0]!=null)//New Puzzle, not new section
 					{
-						$.ajax({url:'sql.php?query=UPDATE Team SET CurrentPuzzle=(SELECT Next.PuzzleId FROM Puzzle AS Current LEFT OUTER JOIN Puzzle AS Next ON (Current.NextPuzzleId=Next.PuzzleId) WHERE Current.PuzzleId='+currentPuzzle+' AND Current.CompletionCode="'+$("#code").val()+'" AND TeamId='+teamId+') WHERE TeamId='+teamId,
+						$.ajax({url:url+'sql.php?query=UPDATE Team SET CurrentPuzzle=(SELECT Next.PuzzleId FROM Puzzle AS Current LEFT OUTER JOIN Puzzle AS Next ON (Current.NextPuzzleId=Next.PuzzleId) WHERE Current.PuzzleId='+currentPuzzle+' AND Current.CompletionCode="'+$("#code").val()+'" AND TeamId='+teamId+') WHERE TeamId='+teamId,
 							dataType:'json',
 							success:function(result){
 								$("#code").val("");
@@ -76,7 +76,7 @@ function enterCode(){
 					}
 					else //New section and new puzzle
 					{
-						$.ajax({url:'sql.php?query=UPDATE Team SET CurrentPuzzle=(SELECT Next.PuzzleId FROM Puzzle AS Next WHERE Next.First=1 AND Next.SectionId='+result[3]+') WHERE TeamId='+teamId,
+						$.ajax({url:url+'sql.php?query=UPDATE Team SET CurrentPuzzle=(SELECT Next.PuzzleId FROM Puzzle AS Next WHERE Next.First=1 AND Next.SectionId='+result[3]+') WHERE TeamId='+teamId,
 							dataType:'json',
 							success:function(result){
 								$("#code").val("");
@@ -156,4 +156,17 @@ function findGetParameter(parameterName) {
 function insertParam(key, value)
 {
 	history.pushState(null, null, "?"+key+"="+teamName);
+}
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+       // x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+    console.log("Latitude: " + position.coords.latitude + 
+    "    Longitude: " + position.coords.longitude); 
 }
