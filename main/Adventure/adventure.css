@@ -38,3 +38,16 @@ h3 {
 	padding:.5em;
 	margin:.3em;
 }
+
+#code {
+	margin-left: .5em;
+	font-size: 6em;
+	height: 1.4em;
+	width: 4em;
+}
+
+#submitCode {
+	font-size: 2em;
+	padding:.5em;
+	margin:.3em;
+}
