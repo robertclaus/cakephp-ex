@@ -2,7 +2,7 @@ var simulate=false;
 var simulatedImage=1;
 
 
-var url="http://cakephp-mysql-persistent-robert.7e14.starter-us-west-2.openshiftapps.com/main/Adventure/";
+var url="https://cakephp-mysql-persistent-robert.7e14.starter-us-west-2.openshiftapps.com/main/Adventure/";
 if(simulate)
 {
 	url="file:///A:/Github/PHP/main/Adventure/";
