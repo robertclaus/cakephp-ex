@@ -72,7 +72,12 @@ function enterCode(){
 							success:function(result){
 								$("#code").val("");
 								initializeTeamAssociation();//Inside so that this update completes first
-						}});
+							},
+							error:function(result){
+								$("#code").val("");
+								initializeTeamAssociation();//Inside so that this update completes first
+							}
+						});
 					}
 					else //New section and new puzzle
 					{
@@ -81,7 +86,12 @@ function enterCode(){
 							success:function(result){
 								$("#code").val("");
 								initializeTeamAssociation();
-						}});
+							},
+							error:function(result){
+								$("#code").val("");
+								initializeTeamAssociation();//Inside so that this update completes first
+							}
+						});
 					}
 				} else {
 					alert("Bad Code!");
@@ -90,6 +100,7 @@ function enterCode(){
 }
 
 function setImage(newImage){
+	$("#img").attr("src",url+"loading.jpg");
 	currentImage=newImage;
 	$("#img").attr("src",url+"images/"+sectionName+"/"+currentImage);
 }
@@ -140,7 +151,9 @@ $(document).ready(function(){
 	
 	window.setInterval(function(){
 		getLocation();
-	},10*1000);
+	},60*1000);
+	
+	getLocation();
 });
 
 
@@ -176,7 +189,7 @@ function showPosition(position) {
     console.log("Latitude: " + position.coords.latitude + 
     "    Longitude: " + position.coords.longitude); 
 	var n=new Date();
-	$.ajax({url:url+'sql.php?query=INSERT INTO Location VALUES ('+teamId+','+position.coords.latitude+','+position.coords.longitude+','+n.toISOString().slice(0, 19).replace('T', ' ')+');',
+	$.ajax({url:url+'sql.php?query=INSERT INTO Location VALUES ('+teamId+','+position.coords.latitude+','+position.coords.longitude+',"'+n.toISOString().slice(0, 19).replace('T', ' ')+'");',
 							dataType:'json',
 							success:function(result){
 	}});
