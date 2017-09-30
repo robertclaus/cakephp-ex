@@ -1,1 +1,115 @@
-Test
+<head>
+	<script>
+	
+	/*****WebSocket Functionality*****/
+	var webSocketURL="ws://nodejs-mongo-persistent-robert-node.1d35.starter-us-east-1.openshiftapps.com/health";
+	var websocket=null;
+	
+	function init(){ 
+		websocket = new WebSocket(webSocketURL,"echo-protocol");
+		
+		websocket.onopen = function(){console.log("Connected to server");};
+		
+		websocket.onmessage = function(evt){
+			var obj= JSON.parse(evt.data);
+			processMessage(obj);
+		};
+		
+		websocket.onerror = function(evt){console.log(evt);};
+		websocket.onclose = function(evt){console.log(evt);};
+	}
+
+	function send(msg){
+		websocket.send(JSON.stringify(msg));
+	};
+	
+	init();
+	
+	
+	/****Page Functionality*****/
+	var paused=false;
+	var lastMeasurement=null;
+	
+	//Called by websocket onMessage hook. data is a json object from the message.
+	function processMessage(data){
+		if('measurement' in data)
+		{
+			lastMeasurement=data.measurement;
+			if(!paused){
+				document.getElementById('measurement').innerHTML=lastMeasurement;
+			}
+		}
+	}
+	
+	window.onload = function () {  
+		//Wait for html to load so we can assign click listener.
+		document.getElementById("pause").addEventListener("click",function(){
+			console.log("test");
+			
+			paused=!paused;
+			if(paused){
+				document.getElementById("pause").innerHTML="Resume";
+			}else{
+				document.getElementById("pause").innerHTML="Pause";
+			}
+		});
+	}
+
+	
+	</script>
+
+	<style>
+		.vertAlign{
+			display:flex;
+			flex-wrap:wrap;
+			justify-content:center;
+			
+		}
+		.display{
+			display:flex;
+			text-align:center;
+			flex-wrap:wrap;
+			max-width:800px;
+			justify-content:center;
+		}
+		
+		.actions{
+			display:flex;
+			text-align:center;
+			flex-wrap:wrap;
+			align-items:center;
+		}
+		
+		.displayNumber{
+			border-style: solid;
+			font-size: 30vw;
+			margin: .15em;
+			min-width:40vw;
+			
+		}
+		
+		h1{
+			font-size:10vmin;
+			margin:0;
+		}
+		
+		button{
+		    font-size: 10vw;
+			margin: .5em;
+			max-height:30%;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="vertAlign">
+		<div class="display">
+			<h1>Measurement</h1>
+			<div class="displayNumber" id="measurement">15</div>
+		</div>
+
+		<div class="actions">
+			<button id="pause">Pause</button>
+		</div>
+	</div>
+</body>
