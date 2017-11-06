@@ -127,13 +127,13 @@ function populatePuzzleList(){
 	$.each(puzzles, function(puzzleIndex){
 		if(puzzles[puzzleIndex])
 		{
-			addPuzzleRow(puzzleList,puzzles[puzzleIndex]['id'],puzzles[puzzleIndex]['code'],puzzles[puzzleIndex]['img']);
+			addPuzzleRow(puzzleList,puzzles[puzzleIndex]['id'],puzzles[puzzleIndex]['code'],puzzles[puzzleIndex]['id']+".jpg"); 
+			//puzzles[puzzleIndex]['img']);
 		}
 	});
 }
 
 function addPuzzleRow(puzzleList,id,code,img){
-	img=id+".jpg";
 	
 	var newRow=$('<div/>').data("puzzleId",id).addClass("puzzleRow");
 	$('<div/>').text(id).appendTo(newRow);
