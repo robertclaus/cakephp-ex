@@ -20,8 +20,23 @@ if (!empty($_FILES)) {
 	if (!file_exists($targetPathSmall)) {
 		mkdir($targetPathSmall, 0777, true);
 	}
+	
+	echo $targetFileFull;
+	echo $targetFileSmall;
  
     move_uploaded_file($tempFile,$targetFileFull); //6
-    move_uploaded_file($tempFile,$targetFileSmall); //6
+	
+	$percent = 0.1;
+	
+	list($width, $height) = getimagesize($targetFileFull);
+	$newwidth = $width * $percent;
+	$newheight = $height * $percent;
+	
+	$thumb = imagecreatetruecolor($newwidth, $newheight);
+	$source = imagecreatefromjpeg($targetFileFull);
+	
+    imagecopyresized($thumb,$source,0,0,0,0,$newwidth,$newheight,$width,$height); //6
+	
+	imagejpeg($thumb,$targetFileSmall,100);
 }
 ?>
