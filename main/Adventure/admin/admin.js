@@ -144,14 +144,15 @@ function addPuzzleRow(puzzleList,id,code,img){
 			}
 		});
 	}).appendTo(newRow);
-	$('<img/>').attr("src",url+"images_small/"+sections[section]['name']+"/"+img).appendTo(newRow);
+	$('<img/>').attr("src",url+"uploads/Small/"+sections[section]['name']+"/"+img).appendTo(newRow);
+	$('<input/>').attr("type","radio").attr("name","selectedPuzzle").data("puzzleId",id).appendTo(newRow);
 	newRow.appendTo(puzzleList);
 }
 
 function saveSection(){
 	$.each(puzzles,function(puzzleIndex){
 		var puzzle=puzzles[puzzleIndex];
-		$.ajax({url:url+'sql.php?query=UPDATE Puzzle SET CompletionCode="'+puzzle['code']+'", Image="'+puzzle['img']+'", NextPuzzleId='+puzzle['NextPuzzleId']+', First='+puzzle['First']+' WHERE PuzzleId='+puzzle['id'],
+		$.ajax({url:url+'sql.php?query=UPDATE Puzzle SET CompletionCode="'+puzzle['code']+'", Image="'+puzzle['id']+'.jpg", NextPuzzleId='+puzzle['NextPuzzleId']+', First='+puzzle['First']+' WHERE PuzzleId='+puzzle['id'],
 		dataType:'json',
 		success:function(result){	
 		}});
@@ -190,8 +191,8 @@ $(document).ready(function(){
 		url: "../upload.php", 
 		init: function(){
 				this.on("sending", function(file,xhr,formData){
-					formData.append("folderName",sections[section]);
-					formData.append("renameFile","fileName.jpg");
+					formData.append("folderName",sections[section]['name']);
+					formData.append("renameFile",$('input[name=selectedPuzzle]:checked').data("puzzleId")+".jpg");
 				});
 			}
 		});
