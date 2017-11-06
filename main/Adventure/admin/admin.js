@@ -133,6 +133,8 @@ function populatePuzzleList(){
 }
 
 function addPuzzleRow(puzzleList,id,code,img){
+	img=id+".jpg";
+	
 	var newRow=$('<div/>').data("puzzleId",id).addClass("puzzleRow");
 	$('<div/>').text(id).appendTo(newRow);
 	$('<textarea/>').data("puzzleId",id).val(code).on('change',function(event){
