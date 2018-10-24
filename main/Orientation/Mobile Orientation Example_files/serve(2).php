@@ -1,1 +1,0 @@
-document.write('\x3c!-- No active ads were found in the tids \'219\'. --\x3e');
